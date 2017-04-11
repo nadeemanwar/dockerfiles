@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <com.sonyericsson.rebuild.RebuildSettings plugin="rebuild@1.25">
+      <autoRebuild>false</autoRebuild>
+      <rebuildDisabled>false</rebuildDisabled>
+    </com.sonyericsson.rebuild.RebuildSettings>
+    <de.pellepelster.jenkins.walldisplay.WallDisplayJobProperty plugin="jenkinswalldisplay@0.6.30"/>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.48">
+      <scriptText>def project = &apos;slfletch/openstack-helm&apos;
+def folderProject = project.replaceAll(&apos;/&apos;,&apos;-&apos;)
+def contentsAPI = new URL(&quot;https://api.github.com/repos/slfletch/openstack-helm/contents&quot;)
+
+listView(&quot;${project}&quot;.replaceAll(&apos;/&apos;,&apos;-&apos;)) {
+    description(&apos;All unstable jobs for project A&apos;)
+       
+   columns {
+        status()
+        weather()
+        name()
+        lastSuccess()
+        lastFailure()
+        lastDuration()
+        buildButton()
+    }
+}
+
+folder(&quot;${folderProject}&quot;){
+  displayName(&quot;${folderProject}&quot;)
+}
+   
+def repositoryContents = new groovy.json.JsonSlurper().parse(contentsAPI.newReader())
+repositoryContents.each {
+  
+  def dirName = it.name
+  
+  if (it.type == &quot;dir&quot; &amp;&amp; !it.type.startsWith(&quot;.&quot;)){
+    
+ 
+    def jobName = &quot;${project}-${dirName}&quot;.replaceAll(&apos;/&apos;,&apos;-&apos;)
+    pipelineJob(&quot;${folderProject}/${jobName}&quot;) {
+    definition {
+        cps {
+          script(&apos;node {  stage(&quot;lint&quot;){ sh \&apos;echo &quot;linting&quot;\&apos;} \n stage(&quot;install&quot;){ sh \&apos;echo &quot;linting&quot;\&apos;} \n stage(&quot;package&quot;){sh \&apos;echo &quot;linting&quot;\&apos;}}&apos;)
+          sandbox()
+        }
+    }
+}
+   
+  } else {
+    println(&quot;Not a directory!&quot;)
+  }
+  
+}</scriptText>
+      <usingScriptText>true</usingScriptText>
+      <ignoreExisting>false</ignoreExisting>
+      <ignoreMissingFiles>false</ignoreMissingFiles>
+      <removedJobAction>IGNORE</removedJobAction>
+      <removedViewAction>IGNORE</removedViewAction>
+      <lookupStrategy>JENKINS_ROOT</lookupStrategy>
+      <additionalClasspath></additionalClasspath>
+    </javaposse.jobdsl.plugin.ExecuteDslScripts>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>
+    
