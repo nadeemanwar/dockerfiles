@@ -1,4 +1,6 @@
 FROM jenkins
+MAINTAINER na1431@att.com
+
 
 ENV JENKINS_USER admin
 ENV JENKINS_PASS admin
