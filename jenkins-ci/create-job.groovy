@@ -37,3 +37,5 @@ def xmlDataStream = new ByteArrayInputStream( seedJobConfigXml.getBytes() )
 
 Jenkins.instance.createProjectFromXML(seedJobName, xmlDataStream)
 
+def job = Jenkins.instance.getItem(seedJobName)
+Jenkins.instance.getQueue().schedule(job) 
