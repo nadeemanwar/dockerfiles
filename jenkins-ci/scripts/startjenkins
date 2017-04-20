@@ -1,1 +1,1 @@
-docker run -p 8080:8080 -p 50000:50000 -v /home/jenkins:/var/jenkins_home --name jenkins-master att_clcp/jenkins-master &
+docker run  --expose=9490 -p 9490:9490 -p 50200:50200 -v /home/jenkins:/var/jenkins_home --name jenkins-master att_clcp/jenkins-master &
